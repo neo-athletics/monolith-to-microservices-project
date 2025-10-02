@@ -12,8 +12,7 @@ jobs:
       - checkout
 
       # Enable Docker-in-Docker
-      - setup_remote_docker:
-          version: 20.10.14
+      - setup_remote_docker
 
       # Login to Docker Hub using access token
       - run:
