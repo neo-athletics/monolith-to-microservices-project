@@ -1,0 +1,63 @@
+version: 2.1
+
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/base:stable
+
+jobs:
+  build-and-push:
+    executor: docker-executor
+    steps:
+      - checkout
+
+      # Enable Docker-in-Docker
+      - setup_remote_docker:
+          version: 20.10.14
+
+      # Login to Docker Hub using access token
+      - run:
+          name: Docker Login
+          command: echo "$DOCKER_ACCESS_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+      # Build all services with docker-compose-build.yaml
+      - run:
+          name: Build Images with Docker Compose
+          command: docker-compose -f docker-compose-build.yaml build
+
+      # Tag and push reverseproxy
+      - run:
+          name: Tag and Push Reverseproxy
+          command: |
+            docker tag reverseproxy $DOCKERHUB_USERNAME/udagram-reverseproxy:latest
+            docker push $DOCKERHUB_USERNAME/udagram-reverseproxy:latest
+
+      # Tag and push backend-user
+      - run:
+          name: Tag and Push Backend User
+          command: |
+            docker tag udagram-api-user $DOCKERHUB_USERNAME/udagram-api-user:latest
+            docker push $DOCKERHUB_USERNAME/udagram-api-user:latest
+
+      # Tag and push backend-feed
+      - run:
+          name: Tag and Push Backend Feed
+          command: |
+            docker tag udagram-api-feed $DOCKERHUB_USERNAME/udagram-api-feed:latest
+            docker push $DOCKERHUB_USERNAME/udagram-api-feed:latest
+
+      # Tag and push frontend
+      - run:
+          name: Tag and Push Frontend
+          command: |
+            docker tag udagram-frontend:local $DOCKERHUB_USERNAME/udagram-frontend:latest
+            docker push $DOCKERHUB_USERNAME/udagram-frontend:latest
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build-and-push:
+          filters:
+            branches:
+              only: main # Only push images when main is updated
