@@ -7,4 +7,4 @@ data:
   POSTGRES_DB: postgres
   AWS_BUCKET: image-microservices-bucket-dev
   AWS_REGION: us-east-1
-  URL: a3d47bc784e1f4785adeb29b4fb258ba-1817553393.us-east-1.elb.amazonaws.com # frontend URL
+  URL: http://reverseproxy:8080
