@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverseproxy
+  labels:
+    app: reverseproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverseproxy
+  template:
+    metadata:
+      labels:
+        app: reverseproxy
+    spec:
+      containers:
+        - name: reverseproxy
+          image: orionxo/udagram-reverseproxy:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: reverseproxy-config
+            items:
+              - key: nginx.conf
+                path: nginx.conf

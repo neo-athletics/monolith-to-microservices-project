@@ -36,6 +36,8 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 node_modules
 venv/
+k8s/env-secret.yaml
+k8s/aws-secret.yaml
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
